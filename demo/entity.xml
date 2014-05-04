@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<string xmlns="http://interface.itl.cn/STD/ITLServiceInterFace.asmx">&lt;Requestinterface_Withdrawals_Return&gt;
+	&lt;CustID&gt;123&lt;/CustID&gt;
+	&lt;CompID&gt;456&lt;/CompID&gt;
+	&lt;Items&gt;
+		&lt;WithdrawalsResponseItem&gt;
+			&lt;Cust_OrderCode&gt;100001&lt;/Cust_OrderCode&gt;
+			&lt;OrderType&gt;1&lt;/OrderType&gt;
+			&lt;Result&gt;false&lt;/Result&gt;
+			&lt;InfoCode&gt;0003&lt;/InfoCode&gt;
+			&lt;Reason&gt;无效状态范围&lt;/Reason&gt;
+		&lt;/WithdrawalsResponseItem&gt;
+	&lt;/Items&gt;
+&lt;/Requestinterface_Withdrawals_Return&gt;</string>
