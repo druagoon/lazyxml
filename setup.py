@@ -31,5 +31,5 @@ setup(name='lazyxml',
       url='https://github.com/heronotears',
       packages=['lazyxml'],
       license=license,
-      platforms=["any"],
+      platforms=['any'],
       )

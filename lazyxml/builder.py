@@ -38,7 +38,7 @@ class Builder(object):
     def get_options(self):
         return self.__options
 
-    def dict2xml(self, data, root=None):
+    def dict2xml(self, data):
         """
         # convert dict to xml
         # @param   dict data
@@ -50,12 +50,10 @@ class Builder(object):
 
         root = self.__options['root']
         if not root:
-            if len(data) == 1:
-                root, data = data.items()[0]
-                if self.__options['hasattr']:
-                    data = data.get(self.__options['valuekey']) or ''
-            else:
-                raise ValueError('miss parameter[root] or the length of the data must be 1.')
+            assert (isinstance(data, dict) and len(data) == 1), 'root not specified, require data is dict object and length must be one.'
+            root, data = data.items()[0]
+            if self.__options['hasattr']:
+                data = data.get(self.__options['valuekey']) or ''
 
         self.build_tree(data, root)
         xml = ''.join(self.__tree).strip()
@@ -103,8 +101,8 @@ class Builder(object):
     def safedata(self, data, cdata=True):
         """
         # convert to safe data
-        # @params str data
-        # @params bool cdata
+        # @param str data
+        # @param bool cdata
         # @return str
         # @todo
         """
