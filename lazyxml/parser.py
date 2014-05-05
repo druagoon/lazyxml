@@ -29,7 +29,8 @@ class Parser(object):
             'encoding': 'utf-8',            # XML编码
             'unescape': False,              # 是否转换HTML实体
             'strip_root': True,             # 是否去除解析根节点
-            'strip': True                   # 是否去除空白字符
+            'strip': True,                  # 是否去除空白字符
+            'errors': 'strict',             # 解码错误句柄 参见: Codec Base Classes
         }
 
         self.set_options(**kw)
@@ -60,7 +61,7 @@ class Parser(object):
         """
         content = utils.strip_whitespace(content, True) if self.__options['strip'] else content.strip()
         if self.__options['encoding'].lower() != self.__encoding:
-            content = self.strip_xml_header(content.decode(self.__options['encoding'], 'xmlcharrefreplace'))  # 非内部utf-8编码需作编码转换并去除xml头部
+            content = self.strip_xml_header(content.decode(self.__options['encoding'], errors=self.__options['errors']))  # 非内部utf-8编码需作编码转换并去除xml头部
         if self.__options['unescape']:
             content = utils.html_entity_decode(content)
         return content

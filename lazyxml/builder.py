@@ -22,6 +22,7 @@ class Builder(object):
             'indent': None,                 # XML层次缩进
             'ksort': False,                 # 标签是否排序
             'reverse': False,               # 标签排序时是否反序
+            'errors': 'strict',             # 编码错误句柄 参见: Codec Base Classes
             'hasattr': False,               # 是否包含属性
             'attrkey': 'attr',              # 标签属性标识key
             'valuekey': 'value'             # 标签值标识key
@@ -50,15 +51,16 @@ class Builder(object):
 
         root = self.__options['root']
         if not root:
-            assert (isinstance(data, dict) and len(data) == 1), 'root not specified, require data is dict object and length must be one.'
+            assert (isinstance(data, dict) and len(data) == 1), \
+                'if root not specified, the data that dict object and length must be one required.'
             root, data = data.items()[0]
             if self.__options['hasattr']:
                 data = data.get(self.__options['valuekey']) or ''
 
         self.build_tree(data, root)
-        xml = ''.join(self.__tree).strip()
+        xml = unicode(''.join(self.__tree).strip())
         if self.__options['encoding'] != self.__encoding:
-            xml = xml.decode(self.__options['encoding'])
+            xml = xml.encode(self.__options['encoding'], errors=self.__options['errors'])
         return xml
 
     def build_xml_header(self):
