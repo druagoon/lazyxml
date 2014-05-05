@@ -21,12 +21,13 @@ class Parser(object):
 
         self.__regex = {
             'xml_ns': re.compile(r"\{(.*)\}(.*)"),  # XML命名空间正则匹配对象
-            'xml_header': re.compile(r'<\?xml\s+[^>]*\?>', re.I)  # XML头部正则匹配对象 不区分大小写
+            'xml_header': re.compile(r'<\?xml.*?\?>', re.I|re.S),  # XML头部声明正则匹配对象
+            'xml_encoding': re.compile(r'<\?xml\s+.*?encoding="(.*?)".*?\?>', re.I|re.S)  # XML编码声明正则匹配对象
         }
 
         # 默认参数选项
         self.__options = {
-            'encoding': 'utf-8',            # XML编码
+            'encoding': None,               # XML编码
             'unescape': False,              # 是否转换HTML实体
             'strip_root': True,             # 是否去除解析根节点
             'strip': True,                  # 是否去除空白字符
@@ -60,11 +61,25 @@ class Parser(object):
         # 解析xml前过一些过滤和转换 使xml可解析
         """
         content = utils.strip_whitespace(content, True) if self.__options['strip'] else content.strip()
+
+        if not self.__options['encoding']:
+            encoding = self.guess_xml_encoding(content) or self.__encoding
+            self.set_options(encoding=encoding)
+
         if self.__options['encoding'].lower() != self.__encoding:
-            content = self.strip_xml_header(content.decode(self.__options['encoding'], errors=self.__options['errors']))  # 非内部utf-8编码需作编码转换并去除xml头部
+            # 编码转换去除xml头
+            content = self.strip_xml_header(content.decode(self.__options['encoding'], errors=self.__options['errors']))
+
         if self.__options['unescape']:
             content = utils.html_entity_decode(content)
         return content
+
+    def guess_xml_encoding(self, content):
+        """
+        # guess encoding from xml header declaration
+        """
+        matchobj = self.__regex['xml_encoding'].match(content)
+        return matchobj and matchobj.group(1).lower()
 
     def strip_xml_header(self, content):
         return self.__regex['xml_header'].sub('', content)
@@ -106,5 +121,5 @@ class Parser(object):
         # @return  tuple (namespace, tag)
         # @todo
         """
-        result = self.__regex['xml_ns'].search(tag)
-        return result.groups() if result else ('', tag)
+        matchobj = self.__regex['xml_ns'].search(tag)
+        return matchobj.groups() if matchobj else ('', tag)

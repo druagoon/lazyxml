@@ -14,7 +14,7 @@ class Builder(object):
         self.__encoding = 'utf-8'  # 内部默认编码: utf-8
 
         self.__options = {
-            'encoding': 'utf-8',            # XML编码
+            'encoding': None,               # XML编码
             'header_declare': True,         # 是否XML头部声明
             'version': '1.0',               # XML版本号
             'root': None,                   # XML根节点
@@ -46,6 +46,9 @@ class Builder(object):
         # @return  str
         # @todo
         """
+        if not self.__options['encoding']:
+            self.set_options(encoding=self.__encoding)
+
         if self.__options['header_declare']:
             self.__tree.append(self.build_xml_header())
 
@@ -59,6 +62,7 @@ class Builder(object):
 
         self.build_tree(data, root)
         xml = unicode(''.join(self.__tree).strip())
+
         if self.__options['encoding'] != self.__encoding:
             xml = xml.encode(self.__options['encoding'], errors=self.__options['errors'])
         return xml

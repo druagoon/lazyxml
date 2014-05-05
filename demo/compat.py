@@ -3,6 +3,7 @@
 
 
 import sys
+sys.path.append('..')
 
 if sys.version_info[0] == 2:
     reload(sys)
