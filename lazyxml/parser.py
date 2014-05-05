@@ -54,7 +54,10 @@ class Parser(object):
         content = self.xml_filter(content)
         el = ET.fromstring(content)
         tree = self.parse(el)
-        return tree if self.__options['strip_root'] else {el.tag: tree}
+        if not self.__options['strip_root']:
+            node = self.get_node(el)
+            return {node['tag']: tree}
+        return tree
 
     def xml_filter(self, content):
         """

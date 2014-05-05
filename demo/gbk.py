@@ -11,7 +11,7 @@ import lazyxml
 def main(filename='gbk.xml'):
     with open(filename, 'rb') as fp:
         xml = fp.read()
-    print lazyxml.loads(xml)
+    print lazyxml.loads(xml, strip_root=False)
 
 
 if __name__ == '__main__':

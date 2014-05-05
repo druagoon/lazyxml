@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="gbk"?>
-<string xmlns="http://interface.itl.cn/STD/ITLServiceInterFace.asmx"><Response>
-	<Result>true</Result>
-	<Reason>情悄悄</Reason>
-	<enc>gbk编码</enc>
-</Response></string>
+<string xmlns="http://www.w3.org/TR/html4/">
+	<Response>
+		<Result>true</Result>
+		<Reason>保存成功</Reason>
+	</Response>
+</string>
