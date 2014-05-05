@@ -11,14 +11,14 @@ except ImportError:
 import lazyxml
 
 
-with open('README.md') as f:
-    readme = f.read()
+with open('README.md') as fp:
+    readme = fp.read()
 
-with open('CHANGELOG') as f:
-    changelog = f.read()
+with open('CHANGELOG') as fp:
+    changelog = fp.read()
 
-with open('LICENSE') as f:
-    license = f.read()
+with open('LICENSE') as fp:
+    license = fp.read()
 
 setup(name='lazyxml',
       version=lazyxml.__version__,
@@ -31,5 +31,5 @@ setup(name='lazyxml',
       url='https://github.com/heronotears',
       packages=['lazyxml'],
       license=license,
-      platforms=["any"],
+      platforms=['any'],
       )

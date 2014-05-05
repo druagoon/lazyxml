@@ -14,7 +14,7 @@ class Builder(object):
         self.__encoding = 'utf-8'  # 内部默认编码: utf-8
 
         self.__options = {
-            'encoding': 'utf-8',            # XML编码
+            'encoding': None,               # XML编码
             'header_declare': True,         # 是否XML头部声明
             'version': '1.0',               # XML版本号
             'root': None,                   # XML根节点
@@ -22,6 +22,7 @@ class Builder(object):
             'indent': None,                 # XML层次缩进
             'ksort': False,                 # 标签是否排序
             'reverse': False,               # 标签排序时是否反序
+            'errors': 'strict',             # 编码错误句柄 参见: Codec Base Classes
             'hasattr': False,               # 是否包含属性
             'attrkey': 'attr',              # 标签属性标识key
             'valuekey': 'value'             # 标签值标识key
@@ -38,29 +39,32 @@ class Builder(object):
     def get_options(self):
         return self.__options
 
-    def dict2xml(self, data, root=None):
+    def dict2xml(self, data):
         """
         # convert dict to xml
         # @param   dict data
         # @return  str
         # @todo
         """
+        if not self.__options['encoding']:
+            self.set_options(encoding=self.__encoding)
+
         if self.__options['header_declare']:
             self.__tree.append(self.build_xml_header())
 
         root = self.__options['root']
         if not root:
-            if len(data) == 1:
-                root, data = data.items()[0]
-                if self.__options['hasattr']:
-                    data = data.get(self.__options['valuekey']) or ''
-            else:
-                raise ValueError('miss parameter[root] or the length of the data must be 1.')
+            assert (isinstance(data, dict) and len(data) == 1), \
+                'if root not specified, the data that dict object and length must be one required.'
+            root, data = data.items()[0]
+            if self.__options['hasattr']:
+                data = data.get(self.__options['valuekey']) or ''
 
         self.build_tree(data, root)
-        xml = ''.join(self.__tree).strip()
+        xml = unicode(''.join(self.__tree).strip())
+
         if self.__options['encoding'] != self.__encoding:
-            xml = xml.decode(self.__options['encoding'])
+            xml = xml.encode(self.__options['encoding'], errors=self.__options['errors'])
         return xml
 
     def build_xml_header(self):
@@ -103,8 +107,8 @@ class Builder(object):
     def safedata(self, data, cdata=True):
         """
         # convert to safe data
-        # @params str data
-        # @params bool cdata
+        # @param str data
+        # @param bool cdata
         # @return str
         # @todo
         """

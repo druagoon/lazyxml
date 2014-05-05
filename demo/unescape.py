@@ -4,10 +4,11 @@
 
 from __future__ import with_statement
 
+import compat
 import lazyxml
 
 
-def main(filename='entity.xml'):
+def main(filename='unescape.xml'):
     with open(filename, 'rb') as fp:
         print lazyxml.load(fp, unescape=True)
 

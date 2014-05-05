@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
+import compat
 import lazyxml
 
 s = {
