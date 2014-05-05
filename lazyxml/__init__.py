@@ -15,7 +15,7 @@ from .parser import Parser
 from .builder import Builder
 
 __author__ = 'Zonglong Fan <lazyboy.fan@gmail.com>'
-__version__ = '1.0'
+__version__ = '1.1'
 
 
 def loads(content, **kw):
