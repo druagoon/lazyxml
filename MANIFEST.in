@@ -1,0 +1,8 @@
+include LICENSE
+include Makefile
+include README.rst
+include MANIFEST.in
+include CHANGELOG.rst
+recursive-include demo *
+recursive-exclude * *.py[co]
+recursive-exclude * __pycache__
