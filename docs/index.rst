@@ -3,8 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to lazyxml's documentation!
-===================================
+LazyXML |release| Documentation
+===============================
+
+
+API Documentation
+-----------------
 
 .. toctree::
    :maxdepth: 2
@@ -13,13 +17,14 @@ Welcome to lazyxml's documentation!
 
 
 Changes
-=======
+-------
 
 See the :doc:`changelog` for a full list of changes to :mod:`lazyxml`.
 
 
 About This Documentation
 ------------------------
+
 This documentation is generated using the `Sphinx
 <http://sphinx.pocoo.org/>`_ documentation generator. The source files
 for the documentation are located in the *docs/* directory of the
@@ -35,7 +40,7 @@ or use ``make help`` to generate other format.
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
