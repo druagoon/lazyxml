@@ -14,16 +14,13 @@ import lazyxml
 with open('README.rst') as fp:
     readme = fp.read()
 
-with open('CHANGELOG.rst') as fp:
-    changelog = fp.read()
-
 with open('LICENSE') as fp:
     license = fp.read()
 
 setup(name='lazyxml',
       version=lazyxml.__version__,
       description='Simple xml parse and build lib.',
-      long_description=readme + '\n\n' + changelog,
+      long_description=readme,
       author='Zonglong Fan',
       author_email='lazyboy.fan@gmail.com',
       maintainer='Zonglong Fan',
