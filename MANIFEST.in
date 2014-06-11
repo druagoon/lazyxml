@@ -1,8 +1,11 @@
 include LICENSE
-include Makefile
 include README.rst
 include MANIFEST.in
 include CHANGELOG.rst
+recursive-include * Makefile
+recursive-include * make.bat
+recursive-include docs *.py
+recursive-include docs *.rst
 recursive-include demo *
 recursive-exclude * *.py[co]
 recursive-exclude * __pycache__

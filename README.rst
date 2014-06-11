@@ -7,20 +7,14 @@ lazyxml
 .. image:: http://b.repl.ca/v1/License-MIT-blue.png
     :target: https://pypi.python.org/pypi/lazyxml
     :alt: License
-.. image:: https://pypip.in/download/lazyxml/badge.png?period=day
-    :target: https://pypi.python.org/pypi/lazyxml
-    :alt: Downloads
-.. image:: https://pypip.in/download/lazyxml/badge.png?period=week
-    :target: https://pypi.python.org/pypi/lazyxml
-    :alt: Downloads
 .. image:: https://pypip.in/download/lazyxml/badge.png?period=month
     :target: https://pypi.python.org/pypi/lazyxml
     :alt: Downloads
 
 简单的xml解析/生成库. 类似于simplejson的用法.
 
-使用示例
---------
+示例
+----
 
 * xml转换成python对象
 
