@@ -165,7 +165,7 @@ def dump(obj, fp, **kw):
     :param fp: a filename or a file or file-like object that support ``.write()`` to write the xml content
 
     .. versionchanged:: 1.2
-        The `fp` is a filename of string. It can now be a file or file-like object that support ``.write()`` to write the xml content.
+        The `fp` is a filename of string before this. It can now be a file or file-like object that support ``.write()`` to write the xml content.
     """
     xml = dumps(obj, **kw)
     if isinstance(fp, basestring):

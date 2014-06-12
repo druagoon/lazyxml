@@ -77,11 +77,11 @@ Examples
 Documentation
 =============
 
-See `docs <http://lazyxml.readthedocs.org/en/latest/>`_
+See `docs in pythonhosted <http://pythonhosted.org/lazyxml>`_ or `docs in readthedocs <http://lazyxml.readthedocs.org/en/latest/>`_
 
 
 
 Changelog
 =========
 
-See `changelog <http://lazyxml.readthedocs.org/en/latest/changelog.html>`_
+See `changelog <http://pythonhosted.org/lazyxml/changelog.html>`_
