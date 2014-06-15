@@ -13,6 +13,10 @@ Brief
 
 简单的xml解析/生成库. 类似于simplejson的用法.
 
+.. warning::
+
+   Python 2.5 or greater is required in version 1.2.1.
+
 
 Installation
 ============

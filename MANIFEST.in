@@ -1,7 +1,6 @@
 include LICENSE
 include README.rst
 include MANIFEST.in
-include CHANGELOG.rst
 recursive-include * Makefile
 recursive-include * make.bat
 recursive-include docs *.py

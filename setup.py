@@ -3,6 +3,11 @@
 
 
 from __future__ import with_statement
+
+import sys
+if sys.version_info < (2, 5):
+    sys.exit('Python 2.5 or greater is required.')
+
 try:
     from setuptools import setup
 except ImportError:

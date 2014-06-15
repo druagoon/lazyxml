@@ -17,6 +17,19 @@ def main():
     # 去除根节点
     print lazyxml.loads(xml, strip_root=False)
 
+    xml = '''
+    <demo depth="1" show="demo">
+        <foo depth="2" show="foo">
+            <subfoo depth="3" show="subfoo">
+                subfoo
+            </subfoo>
+        </foo>
+        <bar depth="2" show="bar-1">bar-1</bar>
+        <bar depth="2" show="bar-2">bar-2</bar>
+    </demo>
+    '''
+    print lazyxml.loads(xml, strip_root=False, strip_attr=False)
+
     # html实体字符转换
     xml = '<root xmlns:h="http://www.w3.org/TR/html4/">&lt;demo&gt;&lt;foo&gt;foo&lt;/foo&gt;&lt;bar&gt;bar&lt;/bar&gt;&lt;/demo&gt;</root>'
     print lazyxml.loads(xml, unescape=True)

@@ -2,6 +2,11 @@ Changelog
 =========
 
 
+1.2.1 (2014-06-13)
+------------------
+
+- Added ``strip_attr`` option to decide whether return the element attributes for parse result in :func:`lazyxml.loads` and :func:`lazyxml.load`.
+
 1.2 (2014-06-10)
 ----------------
 
