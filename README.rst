@@ -13,6 +13,10 @@ Brief
 
 简单的xml解析/生成库. 类似于simplejson的用法.
 
+.. warning::
+
+   Python 2.5 or greater is required in version 1.2.1.
+
 
 Installation
 ============
@@ -77,11 +81,11 @@ Examples
 Documentation
 =============
 
-See `docs <http://lazyxml.readthedocs.org/en/latest/>`_
+See `docs in pythonhosted <http://pythonhosted.org/lazyxml>`_ or `docs in readthedocs <http://lazyxml.readthedocs.org/en/latest/>`_
 
 
 
 Changelog
 =========
 
-See `changelog <http://lazyxml.readthedocs.org/en/latest/changelog.html>`_
+See `changelog <http://pythonhosted.org/lazyxml/changelog.html>`_

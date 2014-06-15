@@ -17,7 +17,7 @@ from . import parser
 
 
 __author__ = 'Zonglong Fan <lazyboy.fan@gmail.com>'
-__version__ = '1.2'
+__version__ = '1.2.1'
 
 
 def loads(content, **kw):
@@ -51,10 +51,15 @@ def loads(content, **kw):
     :type unescape: bool
     :param strip_root: 是否去除根节点 默认：``True``.
     :type strip_root: bool
+    :param strip_attr: 是否去除节点属性 默认：``True``.
+    :type strip_attr: bool
     :param strip: 是否去除空白字符（换行符、制表符） 默认：``True``.
     :type strip: bool
     :param errors: 解码错误句柄 参考: :meth:`str.decode` 默认：``strict``.
     :rtype: dict
+
+    .. versionchanged:: 1.2.1
+        The ``strip_attr`` option supported to decide whether return the element attributes for parse result.
     """
     return parser.Parser(**kw).xml2object(content)
 
@@ -165,7 +170,7 @@ def dump(obj, fp, **kw):
     :param fp: a filename or a file or file-like object that support ``.write()`` to write the xml content
 
     .. versionchanged:: 1.2
-        The `fp` is a filename of string. It can now be a file or file-like object that support ``.write()`` to write the xml content.
+        The `fp` is a filename of string before this. It can now be a file or file-like object that support ``.write()`` to write the xml content.
     """
     xml = dumps(obj, **kw)
     if isinstance(fp, basestring):

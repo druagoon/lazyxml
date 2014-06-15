@@ -3,6 +3,7 @@
 
 
 import re
+import collections
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
@@ -28,6 +29,7 @@ class Parser(object):
             'encoding': None,               # XML编码
             'unescape': False,              # 是否转换HTML实体
             'strip_root': True,             # 是否去除根节点
+            'strip_attr': True,             # 是否去除节点属性
             'strip': True,                  # 是否去除空白字符（换行符、制表符）
             'errors': 'strict',             # 解码错误句柄 参见: Codec Base Classes
         }
@@ -68,10 +70,12 @@ class Parser(object):
         .. versionadded:: 1.2
         """
         content = self.xml_filter(content)
-        el = ET.fromstring(content)
-        tree = self.parse(el)
+        element = ET.fromstring(content)
+        tree = self.parse(element) if self.__options['strip_attr'] else self.parse_full(element)
         if not self.__options['strip_root']:
-            node = self.get_node(el)
+            node = self.get_node(element)
+            if not self.__options['strip_attr']:
+                tree['attrs'] = node['attr']
             return {node['tag']: tree}
         return tree
 
@@ -131,8 +135,30 @@ class Parser(object):
                 values[node['tag']].append(value)
         return values
 
+    def parse_full(self, element):
+        r"""Parse xml element include the node attributes.
+
+        :param element: an :class:`~xml.etree.ElementTree.Element` instance
+        :rtype: dict
+
+        .. versionadded:: 1.2.1
+        """
+        values = collections.defaultdict(dict)
+        for child in element:
+            node = self.get_node(child)
+            subs = self.parse_full(child)
+            value = subs or {'values': node['value']}
+            value['attrs'] = node['attr']
+            if node['tag'] not in values['values']:
+                values['values'][node['tag']] = value
+            else:
+                if not isinstance(values['values'][node['tag']], list):
+                    values['values'][node['tag']] = [values['values'].pop(node['tag'])]
+                values['values'][node['tag']].append(value)
+        return values
+
     def get_node(self, element):
-        r"""Parse element tag info.
+        r"""Get node info.
 
         Parse element and get the element tag info. Include tag name, value, attribute, namespace.
 
