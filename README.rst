@@ -1,13 +1,13 @@
 Brief
 =====
 
-.. image:: https://pypip.in/version/lazyxml/badge.png
+.. image:: https://img.shields.io/pypi/v/lazyxml.svg
    :target: https://pypi.python.org/pypi/lazyxml
    :alt: Latest Version
-.. image:: http://b.repl.ca/v1/License-MIT-blue.png
-   :target: https://pypi.python.org/pypi/lazyxml
+.. image:: https://img.shields.io/github/license/heronotears/lazyxml.svg
+   :target: https://github.com/heronotears/lazyxml/blob/master/LICENSE
    :alt: License
-.. image:: https://pypip.in/download/lazyxml/badge.png?period=month
+.. image:: https://img.shields.io/pypi/dm/lazyxml.svg
    :target: https://pypi.python.org/pypi/lazyxml
    :alt: Downloads
 
