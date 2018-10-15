@@ -9,7 +9,7 @@ try:
 except ImportError:
     import xml.etree.ElementTree as ET
 
-import utils
+from . import utils
 
 
 class Parser(object):
