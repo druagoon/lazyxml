@@ -9,7 +9,11 @@ import re
 import sys
 import types
 import collections
-import htmlentitydefs
+import sys
+if sys.version_info[0] == 3:
+    from html import entities as htmlentitydefs
+else:
+    import htmlentitydefs
 
 
 HTML_ENTITY_PATTERN = re.compile('&(\w+?);')

@@ -4,7 +4,7 @@
 
 import cgi
 
-import utils
+from . import utils
 
 
 class Builder(object):
