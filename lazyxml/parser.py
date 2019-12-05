@@ -1,58 +1,62 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+#  MIT License
+#
+#  Copyright (c) 2019 Ryan Fau
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in all
+#  copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#  SOFTWARE.
 
-import re
 import collections
+
 try:
     import xml.etree.cElementTree as ET
 except ImportError:
     import xml.etree.ElementTree as ET
 
-import utils
+from . import utils
+from .consts import Default, Regex
 
 
 class Parser(object):
-    r"""XML Parser
+    """Simple xml parser
     """
 
-    def __init__(self, **kw):
-        self.__encoding = 'utf-8'           # 内部默认编码: utf-8
+    def __init__(self, encoding=None, unescape=False, strip_root=True,
+                 strip_attr=True, strip=True, errors='strict'):
+        """Constructor for Parser, with sensible defaults.
 
-        self.__regex = {
-            'xml_ns': re.compile(r'\{(.*?)\}(.*)'),  # XML命名空间正则匹配对象
-            'xml_header': re.compile(r'<\?xml.*?\?>', re.I|re.S),  # XML头部声明正则匹配对象
-            'xml_encoding': re.compile(r'<\?xml\s+.*?encoding="(.*?)".*?\?>', re.I|re.S)  # XML编码声明正则匹配对象
-        }
-
-        self.__options = {
-            'encoding': None,               # XML编码
-            'unescape': False,              # 是否转换HTML实体
-            'strip_root': True,             # 是否去除根节点
-            'strip_attr': True,             # 是否去除节点属性
-            'strip': True,                  # 是否去除空白字符（换行符、制表符）
-            'errors': 'strict',             # 解码错误句柄 参见: Codec Base Classes
-        }
-
-        self.set_options(**kw)
-
-    def set_options(self, **kw):
-        r"""Set Parser options.
-
-        .. seealso::
-            ``kw`` argument have the same meaning as in :func:`lazyxml.loads`
+        :param str encoding: xml content encoding. if not set, will guess from xml header declare if possible.
+        :param bool unescape: unescape xml html entity character. Default to ``False``.
+        :param bool strip_root: strip root. Default to ``True``.
+        :param bool strip_attr: strip tag attrs. Default to ``True``.
+        :param bool strip: strip whitespace. Default to ``True``.
+        :param string errors: xml content decode error handling scheme. Default to ``strict``.
         """
-        for k, v in kw.iteritems():
-            if k in self.__options:
-                self.__options[k] = v
-
-    def get_options(self):
-        r"""Get Parser options.
-        """
-        return self.__options
+        self.__encoding = encoding
+        self.__unescape = unescape
+        self.__strip_root = strip_root
+        self.__strip_attr = strip_attr
+        self.__strip = strip
+        self.__errors = errors
 
     def xml2dict(self, content):
-        r"""Convert xml content to dict.
+        """Convert xml content to dict.
 
         .. warning::
             **DEPRECATED:** :meth:`xml2dict` is deprecated. Please use :meth:`xml2object` instead.
@@ -62,7 +66,7 @@ class Parser(object):
         return self.xml2object(content)
 
     def xml2object(self, content):
-        r"""Convert xml content to python object.
+        """Convert xml content to python object.
 
         :param content: xml content
         :rtype: dict
@@ -71,61 +75,60 @@ class Parser(object):
         """
         content = self.xml_filter(content)
         element = ET.fromstring(content)
-        tree = self.parse(element) if self.__options['strip_attr'] else self.parse_full(element)
-        if not self.__options['strip_root']:
+        tree = self.parse(element) if self.__strip_attr else self.parse_full(element)
+        if not self.__strip_root:
             node = self.get_node(element)
-            if not self.__options['strip_attr']:
+            if not self.__strip_attr:
                 tree['attrs'] = node['attr']
             return {node['tag']: tree}
         return tree
 
     def xml_filter(self, content):
-        r"""Filter and preprocess xml content
+        """Filter and preprocess xml content
 
         :param content: xml content
         :rtype: str
         """
-        content = utils.strip_whitespace(content, True) if self.__options['strip'] else content.strip()
+        content = utils.strip_whitespace(content, True) if self.__strip else content.strip()
 
-        if not self.__options['encoding']:
-            encoding = self.guess_xml_encoding(content) or self.__encoding
-            self.set_options(encoding=encoding)
-
-        if self.__options['encoding'].lower() != self.__encoding:
-            # 编码转换去除xml头
-            content = self.strip_xml_header(content.decode(self.__options['encoding'], errors=self.__options['errors']))
-
-        if self.__options['unescape']:
+        if not self.__encoding:
+            self.__encoding = self.guess_xml_encoding(content) or Default.ENCODING
+        if self.__encoding.lower() != Default.ENCODING:
+            content = self.strip_xml_header(content.decode(self.__encoding, errors=self.__errors))
+        if self.__unescape:
             content = utils.html_entity_decode(content)
         return content
 
-    def guess_xml_encoding(self, content):
-        r"""Guess encoding from xml header declaration.
+    @staticmethod
+    def guess_xml_encoding(content):
+        """Guess encoding from xml header declaration.
 
         :param content: xml content
         :rtype: str or None
         """
-        matchobj = self.__regex['xml_encoding'].match(content)
+        matchobj = Regex.XML_ENCODING.match(content)
         return matchobj and matchobj.group(1).lower()
 
-    def strip_xml_header(self, content):
-        r"""Strip xml header
+    @staticmethod
+    def strip_xml_header(content):
+        """Strip xml header
 
         :param content: xml content
         :rtype: str
         """
-        return self.__regex['xml_header'].sub('', content)
+        return Regex.XML_HEADER.sub('', content)
 
-    def parse(self, element):
-        r"""Parse xml element.
+    @classmethod
+    def parse(cls, element):
+        """Parse xml element.
 
         :param element: an :class:`~xml.etree.ElementTree.Element` instance
         :rtype: dict
         """
         values = {}
         for child in element:
-            node = self.get_node(child)
-            subs = self.parse(child)
+            node = cls.get_node(child)
+            subs = cls.parse(child)
             value = subs or node['value']
             if node['tag'] not in values:
                 values[node['tag']] = value
@@ -135,8 +138,9 @@ class Parser(object):
                 values[node['tag']].append(value)
         return values
 
-    def parse_full(self, element):
-        r"""Parse xml element include the node attributes.
+    @classmethod
+    def parse_full(cls, element):
+        """Parse xml element include the node attributes.
 
         :param element: an :class:`~xml.etree.ElementTree.Element` instance
         :rtype: dict
@@ -145,8 +149,8 @@ class Parser(object):
         """
         values = collections.defaultdict(dict)
         for child in element:
-            node = self.get_node(child)
-            subs = self.parse_full(child)
+            node = cls.get_node(child)
+            subs = cls.parse_full(child)
             value = subs or {'values': node['value']}
             value['attrs'] = node['attr']
             if node['tag'] not in values['values']:
@@ -157,23 +161,30 @@ class Parser(object):
                 values['values'][node['tag']].append(value)
         return values
 
-    def get_node(self, element):
-        r"""Get node info.
+    @classmethod
+    def get_node(cls, element):
+        """Get node info.
 
         Parse element and get the element tag info. Include tag name, value, attribute, namespace.
 
         :param element: an :class:`~xml.etree.ElementTree.Element` instance
         :rtype: dict
         """
-        ns, tag = self.split_namespace(element.tag)
-        return {'tag': tag, 'value': (element.text or '').strip(), 'attr': element.attrib, 'namespace': ns}
+        ns, tag = cls.split_namespace(element.tag)
+        return {
+            'tag': tag,
+            'value': (element.text or '').strip(),
+            'attr': element.attrib,
+            'namespace': ns
+        }
 
-    def split_namespace(self, tag):
-        r"""Split tag namespace.
+    @staticmethod
+    def split_namespace(tag):
+        """Split tag namespace.
 
         :param tag: tag name
         :return: a pair of (namespace, tag)
         :rtype: tuple
         """
-        matchobj = self.__regex['xml_ns'].search(tag)
+        matchobj = Regex.XML_NS.search(tag)
         return matchobj.groups() if matchobj else ('', tag)

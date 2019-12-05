@@ -1,54 +1,73 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+#  MIT License
+#
+#  Copyright (c) 2019 Ryan Fau
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in all
+#  copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#  SOFTWARE.
 
 import cgi
+import collections
+import types
 
-import utils
+from . import utils
+from .consts import Default
 
 
 class Builder(object):
-    r"""XML Builder
+    """Simple xml builder
     """
 
-    def __init__(self, **kw):
-        self.__encoding = 'utf-8'           # 内部默认编码: utf-8
+    def __init__(self, encoding=None, header_declare=True, version=None,
+                 root=None, cdata=True, indent=None, ksort=False, reverse=False,
+                 errors='strict', hasattr=False, attrkey=None, valuekey=None):
+        """Constructor for Builder, with sensible defaults.
 
-        self.__options = {
-            'encoding': None,               # XML编码
-            'header_declare': True,         # 是否声明XML头部
-            'version': '1.0',               # XML版本号
-            'root': None,                   # XML根节点
-            'cdata': True,                  # 是否使用XML CDATA格式
-            'indent': None,                 # XML层次缩进
-            'ksort': False,                 # XML标签是否排序
-            'reverse': False,               # XML标签排序时是否倒序
-            'errors': 'strict',             # 编码错误句柄 参见: Codec Base Classes
-            'hasattr': False,               # 是否包含属性
-            'attrkey': '{attrs}',           # 标签属性标识key
-            'valuekey': '{values}'          # 标签值标识key
-        }
-
+        :param str encoding: xml content encoding. if not set, ``consts.Default.ENCODING`` used.
+        :param bool header_declare: declare xml header. Default to ``True``.
+        :param str version: xml version. if not set, ``consts.Default.VERSION`` used.
+        :param str root: xml root. Default to ``None``.
+        :param bool cdata: use cdata. Default to ``True``.
+        :param str indent: xml pretty indent. Default to ``None``.
+        :param bool ksort: sort xml element keys. Default to ``False``.
+        :param bool reverse: sort xml element keys but reverse. Default to ``False``.
+        :param str errors: xml content decode error handling scheme. Default to ``strict``.
+        :param bool hasattr: data element has attributes. Default to ``False``.
+        :param str attrkey: element tag attribute identification. if not set, ``consts.Default.KEY_ATTR`` used.
+        :param str valuekey: element tag value identification. if not set, ``consts.Default.KEY_VALUE`` used.
+        """
+        self.__encoding = encoding or Default.ENCODING
+        self.__header_declare = header_declare
+        self.__version = version or Default.VERSION
+        self.__root = root
+        self.__cdata = cdata
+        self.__indent = indent
+        self.__ksort = ksort
+        self.__reverse = reverse
+        self.__errors = errors
+        self.__hasattr = hasattr
+        self.__attrkey = attrkey or Default.KEY_ATTR
+        self.__valuekey = valuekey or Default.KEY_VALUE
         self.__tree = []
-        self.set_options(**kw)
-
-    def set_options(self, **kw):
-        r"""Set Builder options.
-
-        .. seealso::
-            ``kw`` argument have the same meaning as in :func:`lazyxml.dumps`
-        """
-        for k, v in kw.iteritems():
-            if k in self.__options:
-                self.__options[k] = v
-
-    def get_options(self):
-        r"""Get Builder options.
-        """
-        return self.__options
 
     def dict2xml(self, data):
-        r"""Convert dict to xml.
+        """Convert dict to xml.
 
         .. warning::
             **DEPRECATED:** :meth:`dict2xml` is deprecated. Please use :meth:`object2xml` instead.
@@ -58,41 +77,39 @@ class Builder(object):
         return self.object2xml(data)
 
     def object2xml(self, data):
-        r"""Convert python object to xml string.
+        """Convert python object to xml string.
 
         :param data: data for build xml. If don't provide the ``root`` option, type of ``data`` must be dict and ``len(data) == 1``.
         :rtype: str or unicode
 
         .. versionadded:: 1.2
         """
-        if not self.__options['encoding']:
-            self.set_options(encoding=self.__encoding)
+        if self.__header_declare:
+            self.__tree.append(
+                self.build_xml_header(self.__encoding, self.__version))
 
-        if self.__options['header_declare']:
-            self.__tree.append(self.build_xml_header())
-
-        root = self.__options['root']
+        root = self.__root
         if not root:
-            assert (isinstance(data, utils.DictTypes) and len(data) == 1), \
+            assert (isinstance(data, collections.Mapping) and len(data) == 1), \
                 'if root not specified, the data that dict object and length must be one required.'
             root, data = data.items()[0]
 
         self.build_tree(data, root)
         xml = unicode(''.join(self.__tree).strip())
 
-        if self.__options['encoding'] != self.__encoding:
-            xml = xml.encode(self.__options['encoding'], errors=self.__options['errors'])
+        if self.__encoding != Default.ENCODING:
+            xml = xml.encode(self.__encoding, errors=self.__errors)
         return xml
 
-    def build_xml_header(self):
-        r"""Build xml header include version and encoding.
-
-        :rtype: str
+    @staticmethod
+    def build_xml_header(encoding=None, version=None):
+        """Build xml header include version and encoding.
         """
-        return '<?xml version="%s" encoding="%s"?>' % (self.__options['version'], self.__options['encoding'])
+        return '<?xml version="{}" encoding="{}"?>'.format(
+            version or Default.VERSION, encoding or Default.ENCODING)
 
     def build_tree(self, data, tagname, attrs=None, depth=0):
-        r"""Build xml tree.
+        """Build xml tree.
 
         :param data: data for build xml.
         :param tagname: element tag name.
@@ -103,58 +120,64 @@ class Builder(object):
         """
         if data is None:
             data = ''
-        indent = ('\n%s' % (self.__options['indent'] * depth)) if self.__options['indent'] else ''
-        if isinstance(data, utils.DictTypes):
-            if self.__options['hasattr'] and self.check_structure(data.keys()):
+        indent = ('\n%s' % (self.__indent * depth)) if self.__indent else ''
+        if isinstance(data, collections.Mapping):
+            if self.__hasattr and self.check_structure(data.keys()):
                 attrs, values = self.pickdata(data)
                 self.build_tree(values, tagname, attrs, depth)
             else:
-                self.__tree.append('%s%s' % (indent, self.tag_start(tagname, attrs)))
+                self.__tree.append(
+                    '{}{}'.format(indent, self.tag_start(tagname, attrs)))
                 iter = data.iteritems()
-                if self.__options['ksort']:
-                    iter = sorted(iter, key=lambda x:x[0], reverse=self.__options['reverse'])
+                if self.__ksort:
+                    iter = sorted(iter, key=lambda x: x[0],
+                                  reverse=self.__reverse)
                 for k, v in iter:
                     attrs = {}
-                    if self.__options['hasattr'] and isinstance(v, utils.DictTypes) and self.check_structure(v.keys()):
+                    if (self.__hasattr and isinstance(v, collections.Mapping)
+                            and self.check_structure(v.keys())):
                         attrs, v = self.pickdata(v)
-                    self.build_tree(v, k, attrs, depth+1)
-                self.__tree.append('%s%s' % (indent, self.tag_end(tagname)))
-        elif utils.is_iterable(data):
+                    self.build_tree(v, k, attrs, depth + 1)
+                self.__tree.append('{}{}'.format(indent, self.tag_end(tagname)))
+        elif utils.is_iterable(data) and not isinstance(data, types.StringTypes):
             for v in data:
                 self.build_tree(v, tagname, attrs, depth)
         else:
             self.__tree.append(indent)
-            data = self.safedata(data, self.__options['cdata'])
+            data = self.safedata(data, self.__cdata)
             self.__tree.append(self.build_tag(tagname, data, attrs))
 
     def check_structure(self, keys):
-        r"""Check structure availability by ``attrkey`` and ``valuekey`` option.
+        """Check structure availability by ``attrkey`` and ``valuekey`` option.
         """
-        return set(keys) <= set([self.__options['attrkey'], self.__options['valuekey']])
+        return set(keys) <= {self.__attrkey, self.__valuekey}
 
     def pickdata(self, data):
-        r"""Pick data from ``attrkey`` and ``valuekey`` option.
+        """Pick data from ``attrkey`` and ``valuekey`` option.
 
         :return: a pair of (attrs, values)
         :rtype: tuple
         """
-        attrs = data.get(self.__options['attrkey']) or {}
-        values = data.get(self.__options['valuekey']) or ''
+        attrs = data.get(self.__attrkey) or {}
+        values = data.get(self.__valuekey) or ''
         return (attrs, values)
 
-    def safedata(self, data, cdata=True):
-        r"""Convert xml special chars to entities.
+    @staticmethod
+    def safedata(data, cdata=True):
+        """Convert xml special chars to entities.
 
         :param data: the data will be converted safe.
         :param cdata: whether to use cdata. Default：``True``. If not, use :func:`cgi.escape` to convert data.
         :type cdata: bool
         :rtype: str
         """
-        safe = ('<![CDATA[%s]]>' % data) if cdata else cgi.escape(str(data), True)
-        return safe
+        if cdata:
+            return '<![CDATA[{}]]>'.format(data)
+        return cgi.escape(str(data), True)
 
-    def build_tag(self, tag, text='', attrs=None):
-        r"""Build tag full info include the attributes.
+    @classmethod
+    def build_tag(cls, tag, text='', attrs=None):
+        """Build tag full info include the attributes.
 
         :param tag: tag name.
         :param text: tag text.
@@ -162,32 +185,38 @@ class Builder(object):
         :type attrs: dict or None
         :rtype: str
         """
-        return '%s%s%s' % (self.tag_start(tag, attrs), text, self.tag_end(tag))
+        return '{}{}{}'.format(cls.tag_start(tag, attrs), text,
+                               cls.tag_end(tag))
 
-    def build_attr(self, attrs):
-        r"""Build tag attributes.
+    @staticmethod
+    def build_attr(attrs):
+        """Build tag attributes.
 
         :param attrs: tag attributes
         :type attrs: dict
         :rtype: str
         """
         attrs = sorted(attrs.iteritems(), key=lambda x: x[0])
-        return ' '.join(map(lambda x: '%s="%s"' % x, attrs))
+        return ' '.join(['{}="{}"'.format(k, v) for k, v in attrs])
 
-    def tag_start(self, tag, attrs=None):
-        r"""Build started tag info.
+    @classmethod
+    def tag_start(cls, tag, attrs=None):
+        """Build started tag info.
 
         :param tag: tag name
         :param attrs: tag attributes. Default：``None``.
         :type attrs: dict or None
         :rtype: str
         """
-        return '<%s %s>' % (tag, self.build_attr(attrs)) if attrs else '<%s>' % tag
+        if attrs:
+            return '<{} {}>'.format(tag, cls.build_attr(attrs))
+        return '<{}>'.format(tag)
 
-    def tag_end(self, tag):
-        r"""Build closed tag info.
+    @staticmethod
+    def tag_end(tag):
+        """Build closed tag info.
 
         :param tag: tag name
         :rtype: str
         """
-        return '</%s>' % tag
+        return '</{}>'.format(tag)

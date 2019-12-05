@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="gbk"?>
 <string xmlns="http://www.w3.org/TR/html4/">
-	<Response>
-		<Result>true</Result>
-		<Reason>保存成功</Reason>
-	</Response>
+    <Response>
+        <Result>true</Result>
+        <Reason>保存成功</Reason>
+    </Response>
 </string>

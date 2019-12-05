@@ -1,27 +1,46 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+#  MIT License
+#
+#  Copyright (c) 2012-2019 Ryan Fau
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in all
+#  copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#  SOFTWARE.
 
-# @package lazyxml
-# @copyright Copyright (c) 2012, Zonglong Fan.
-# @license MIT
-
-r"""A simple xml parse and build lib.
+"""A simple xml parse and build library.
 """
 
+from __future__ import absolute_import, with_statement
 
-from __future__ import with_statement, absolute_import
+from . import builder, parser
 
-from . import builder
-from . import parser
+__title__ = 'lazyxml'
+__description__ = 'A simple xml parse and build library.'
+__author__ = 'Ryan Fau'
+__author_email__ = '<lazyboy.fan@gmail.com>'
+__version__ = '1.3.0'
+__license__ = 'MIT'
+__copyright__ = 'Copyright (c) 2012-2019 Ryan Fau'
 
 
-__author__ = 'Zonglong Fan <lazyboy.fan@gmail.com>'
-__version__ = '1.2.1'
-
-
-def loads(content, **kw):
-    r"""Load xml content to python object.
+def loads(content, encoding=None, unescape=False, strip_root=True,
+          strip_attr=True, strip=True, errors='strict'):
+    """Load xml content to python object.
 
     >>> import lazyxml
 
@@ -41,58 +60,63 @@ def loads(content, **kw):
     >>> lazyxml.loads(xml, unescape=True, strip_root=False)
     {'root': {'demo': {'bar': 'bar', 'foo': 'foo'}}}
 
-    :param content: xml content
-    :type content: str
-
-    ``kw`` arguments below here.
-
-    :param encoding: XML编码 默认：``utf-8``.
-    :param unescape: 是否转换HTML实体 默认：``False``.
-    :type unescape: bool
-    :param strip_root: 是否去除根节点 默认：``True``.
-    :type strip_root: bool
-    :param strip_attr: 是否去除节点属性 默认：``True``.
-    :type strip_attr: bool
-    :param strip: 是否去除空白字符（换行符、制表符） 默认：``True``.
-    :type strip: bool
-    :param errors: 解码错误句柄 参考: :meth:`str.decode` 默认：``strict``.
+    :param str content: xml content.
+    :param str encoding: xml content encoding. if not set, will guess from xml header declare if possible.
+    :param bool unescape: whether to unescape xml html entity character. Default to ``False``.
+    :param bool strip_root: whether to strip root. Default to ``True``.
+    :param bool strip_attr: whether to strip tag attrs. Default to ``True``.
+    :param bool strip: whether to strip whitespace. Default to ``True``.
+    :param string errors: the xml content decode error handling scheme. Default to ``strict``.
     :rtype: dict
 
     .. versionchanged:: 1.2.1
         The ``strip_attr`` option supported to decide whether return the element attributes for parse result.
     """
-    return parser.Parser(**kw).xml2object(content)
+    return parser.Parser(encoding=encoding, unescape=unescape,
+                         strip_root=strip_root, strip_attr=strip_attr,
+                         strip=strip, errors=errors).xml2object(content)
 
 
-def load(fp, **kw):
-    r"""Load xml content from file and convert to python object.
+def load(fp, encoding=None, unescape=False, strip_root=True,
+          strip_attr=True, strip=True, errors='strict'):
+    """Load xml content from file and convert to python object.
 
     >>> import lazyxml
     >>> with open('demo.xml', 'rb') as fp:
     >>>     lazyxml.load(fp)
 
     >>> from cStringIO import StringIO
-    >>> buffer = StringIO('<?xml version="1.0" encoding="utf-8"?><demo><foo><![CDATA[<foo>]]></foo><bar><![CDATA[1]]></bar><bar><![CDATA[2]]></bar></demo>')
-    >>> lazyxml.load(buffer)
+    >>> buf = StringIO('<?xml version="1.0" encoding="utf-8"?><demo><foo><![CDATA[<foo>]]></foo><bar><![CDATA[1]]></bar><bar><![CDATA[2]]></bar></demo>')
+    >>> lazyxml.load(buf)
     {'bar': ['1', '2'], 'foo': '<foo>'}
-    >>> buffer.close()
-
-    .. note::
-        ``kw`` argument have the same meaning as in :func:`loads`
+    >>> buf.close()
 
     :param fp: a file or file-like object that support ``.read()`` to read the xml content
+    :param str encoding: xml content encoding. if not set, will guess from xml header declare if possible.
+    :param bool unescape: whether to unescape xml html entity character. Default to ``False``.
+    :param bool strip_root: whether to strip root. Default to ``True``.
+    :param bool strip_attr: whether to strip tag attrs. Default to ``True``.
+    :param bool strip: whether to strip whitespace. Default to ``True``.
+    :param string errors: the xml content decode error handling scheme. Default to ``strict``.
     :rtype: dict
+
+    .. versionchanged:: 1.2.1
+        The ``strip_attr`` option supported to decide whether return the element attributes for parse result.
     """
     content = fp.read()
-    return loads(content, **kw)
+    return loads(content, encoding=encoding, unescape=unescape,
+                 strip_root=strip_root, strip_attr=strip_attr, strip=strip,
+                 errors=errors)
 
 
-def dumps(obj, **kw):
-    r"""Dump python object to xml.
+def dumps(obj, encoding=None, header_declare=True, version=None, root=None,
+          cdata=True, indent=None, ksort=False, reverse=False, errors='strict',
+          hasattr=False, attrkey=None, valuekey=None):
+    """Dump python object to xml.
 
     >>> import lazyxml
 
-    >>> data = {'demo':{'foo': '<foo>', 'bar': ['1', '2']}}
+    >>> data = {'demo': {'foo': '<foo>', 'bar': ['1', '2']}}
 
     >>> lazyxml.dumps(data)
     '<?xml version="1.0" encoding="utf-8"?><demo><foo><![CDATA[<foo>]]></foo><bar><![CDATA[1]]></bar><bar><![CDATA[2]]></bar></demo>'
@@ -121,33 +145,31 @@ def dumps(obj, **kw):
         Data that has attributes convert to xml see ``demo/dump.py``.
 
     :param obj: data for dump to xml.
-
-    ``kw`` arguments below here.
-
-    :param encoding: XML编码 默认：``utf-8``.
-    :param header_declare: 是否声明XML头部 默认：``True``.
-    :type header_declare: bool
-    :type version: XML版本号 默认：``1.0``.
-    :param root: XML根节点 默认：``None``.
-    :param cdata: 是否使用XML CDATA格式 默认：``True``.
-    :type cdata: bool
-    :param indent: XML层次缩进 默认：``None``.
-    :param ksort: XML标签是否排序 默认：``False``.
-    :type ksort: bool
-    :param reverse: XML标签排序时是否倒序 默认：``False``.
-    :type reverse: bool
-    :param errors: 解码错误句柄 see: :meth:`str.decode` 默认：``strict``.
-    :param hasattr: 是否包含属性 默认：``False``.
-    :type hasattr: bool
-    :param attrkey: 标签属性标识key 默认：``{attrs}``.
-    :param valuekey: 标签值标识key 默认：``{values}``.
+    :param str encoding: xml content encoding. if not set, ``consts.Default.ENCODING`` used.
+    :param bool header_declare: declare xml header. Default to ``True``.
+    :param str version: xml version. if not set, ``consts.Default.VERSION`` used.
+    :param str root: xml root. Default to ``None``.
+    :param bool cdata: use cdata. Default to ``True``.
+    :param str indent: xml pretty indent. Default to ``None``.
+    :param bool ksort: sort xml element keys. Default to ``False``.
+    :param bool reverse: sort xml element keys but reverse. Default to ``False``.
+    :param str errors: xml content decode error handling scheme. Default to ``strict``.
+    :param bool hasattr: data element has attributes. Default to ``False``.
+    :param str attrkey: element tag attribute identification. if not set, ``consts.Default.KEY_ATTR`` used.
+    :param str valuekey: element tag value identification. if not set, ``consts.Default.KEY_VALUE`` used.
     :rtype: str
     """
-    return builder.Builder(**kw).object2xml(obj)
+    return builder.Builder(encoding=encoding, header_declare=header_declare,
+                           version=version, root=root, cdata=cdata,
+                           indent=indent, ksort=ksort, reverse=reverse,
+                           errors=errors, hasattr=hasattr, attrkey=attrkey,
+                           valuekey=valuekey).object2xml(obj)
 
 
-def dump(obj, fp, **kw):
-    r"""Dump python object to file.
+def dump(obj, fp, encoding=None, header_declare=True, version=None, root=None,
+          cdata=True, indent=None, ksort=False, reverse=False, errors='strict',
+          hasattr=False, attrkey=None, valuekey=None):
+    """Dump python object to file.
 
     >>> import lazyxml
     >>> data = {'demo': {'foo': 1, 'bar': 2}}
@@ -157,24 +179,37 @@ def dump(obj, fp, **kw):
 
     >>> from cStringIO import StringIO
     >>> data = {'demo': {'foo': 1, 'bar': 2}}
-    >>> buffer = StringIO()
-    >>> lazyxml.dump(data, buffer)
-    >>> buffer.getvalue()
+    >>> buf = StringIO()
+    >>> lazyxml.dump(data, buf)
+    >>> buf.getvalue()
     <?xml version="1.0" encoding="utf-8"?><demo><foo><![CDATA[1]]></foo><bar><![CDATA[2]]></bar></demo>
-    >>> buffer.close()
-
-    .. note::
-        ``kw`` argument have the same meaning as in :func:`dumps`
+    >>> buf.close()
 
     :param obj: data for dump to xml.
-    :param fp: a filename or a file or file-like object that support ``.write()`` to write the xml content
+    :param fp: a filename or a file or file-like object that support ``.write()`` to write the xml content.
+    :param str encoding: xml content encoding. if not set, ``consts.Default.ENCODING`` used.
+    :param bool header_declare: declare xml header. Default to ``True``.
+    :param str version: xml version. if not set, ``consts.Default.VERSION`` used.
+    :param str root: xml root. Default to ``None``.
+    :param bool cdata: use cdata. Default to ``True``.
+    :param str indent: xml pretty indent. Default to ``None``.
+    :param bool ksort: sort xml element keys. Default to ``False``.
+    :param bool reverse: sort xml element keys but reverse. Default to ``False``.
+    :param str errors: xml content decode error handling scheme. Default to ``strict``.
+    :param bool hasattr: data element has attributes. Default to ``False``.
+    :param str attrkey: element tag attribute identification. if not set, ``consts.Default.KEY_ATTR`` used.
+    :param str valuekey: element tag value identification. if not set, ``consts.Default.KEY_VALUE`` used.
 
     .. versionchanged:: 1.2
         The `fp` is a filename of string before this. It can now be a file or file-like object that support ``.write()`` to write the xml content.
     """
-    xml = dumps(obj, **kw)
-    if isinstance(fp, basestring):
+    xml = dumps(obj, encoding=encoding, header_declare=header_declare,
+                version=version, root=root, cdata=cdata, indent=indent,
+                ksort=ksort, reverse=reverse, errors=errors, hasattr=hasattr,
+                attrkey=attrkey, valuekey=valuekey)
+    func = getattr(fp, 'write', None)
+    if func and callable(func):
+        func(xml)
+    else:
         with open(fp, 'w') as fobj:
             fobj.write(xml)
-    else:
-        fp.write(xml)

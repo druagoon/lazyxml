@@ -1,10 +1,12 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
-from __future__ import with_statement
+sys.path.insert(0, os.path.abspath('../'))
 
-import compat
 import lazyxml
 
 
@@ -17,7 +19,7 @@ def main():
     # 去除根节点
     print lazyxml.loads(xml, strip_root=False)
 
-    xml = '''
+    xml = """
     <demo depth="1" show="demo">
         <foo depth="2" show="foo">
             <subfoo depth="3" show="subfoo">
@@ -27,7 +29,7 @@ def main():
         <bar depth="2" show="bar-1">bar-1</bar>
         <bar depth="2" show="bar-2">bar-2</bar>
     </demo>
-    '''
+    """
     print lazyxml.loads(xml, strip_root=False, strip_attr=False)
 
     # html实体字符转换
@@ -45,7 +47,9 @@ def main():
 
     # 从类文件对象加载xml
     from cStringIO import StringIO
-    buffer = StringIO('<?xml version="1.0" encoding="utf-8"?><demo><foo><![CDATA[<foo>]]></foo><bar><![CDATA[1]]></bar><bar><![CDATA[2]]></bar></demo>')
+
+    buffer = StringIO(
+        '<?xml version="1.0" encoding="utf-8"?><demo><foo><![CDATA[<foo>]]></foo><bar><![CDATA[1]]></bar><bar><![CDATA[2]]></bar></demo>')
     print lazyxml.load(buffer)
     buffer.close()
 

@@ -1,9 +1,13 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import compat
-import lazyxml
+import os
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
+sys.path.insert(0, os.path.abspath('../'))
+
+import lazyxml
 
 ATTRKEY = '{{attrs}}'
 VALUEKEY = '{{values}}'
