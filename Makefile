@@ -2,24 +2,28 @@
 
 help:
 	@echo 'Command:'
-	@echo 'install    install the package.'
-	@echo 'pack       pack the package only in local.'
-	@echo 'upload     upload package to official pypi site.'
-	@echo 'test       upload packge to test pypi site.'
-	@echo 'clean      clean package files.'
+	@echo '     install      install package.'
+	@echo '     pack         pack package locally.'
+	@echo '     pypi         upload package to official pypi site.'
+	@echo '     testpypi     upload package to test pypi site.'
+	@echo '     ci           run unittest.'
+	@echo '     clean        clean package useless files.'
 
 install:
 	python setup.py install
 
 pack:
-	python setup.py sdist --formats=gztar
+	python setup.py sdist bdist_wheel
 
-upload:
-	python setup.py sdist --formats=gztar register upload
+pypi:
+	twine upload dist/*
 
-test:
-	python setup.py sdist --formats=gztar register -r pypitest upload -r pypitest
+testpypi:
+	twine upload --repository testpypi dist/*
+
+ci:
+	python -m unittest tests.test_parser && python -m unittest tests.test_builder
 
 clean:
-	rm -rf dist lazyxml.egg-info build
+	rm -rf dist build lazyxml.egg-info
 	find . -name '*.py[co]'|xargs rm -f

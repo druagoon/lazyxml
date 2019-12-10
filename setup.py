@@ -1,38 +1,29 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
-from __future__ import with_statement
-
 import sys
-if sys.version_info < (2, 5):
-    sys.exit('Python 2.5 or greater is required.')
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup
 
 import lazyxml
 
+if sys.version_info[:2] < (2, 7) or sys.version_info[0] >= 3:
+    sys.exit('Python 2.7.x is required.')
 
-with open('README.rst') as fp:
+with open('README.md') as fp:
     readme = fp.read()
 
-with open('LICENSE') as fp:
-    license = fp.read()
-
-setup(name='lazyxml',
+setup(name=lazyxml.__title__,
       version=lazyxml.__version__,
-      description='Simple xml parse and build lib.',
+      description=lazyxml.__description__,
+      long_description_content_type='text/markdown',
       long_description=readme,
-      author='Zonglong Fan',
-      author_email='lazyboy.fan@gmail.com',
-      maintainer='Zonglong Fan',
-      maintainer_email='lazyboy.fan@gmail.com',
+      author=lazyxml.__author__,
+      author_email=lazyxml.__author_email__,
+      maintainer=lazyxml.__author__,
+      maintainer_email=lazyxml.__author_email__,
       url='https://github.com/heronotears/lazyxml',
-      packages=['lazyxml'],
-      license=license,
-      platforms=['any'],
+      packages=[lazyxml.__title__],
+      license=lazyxml.__license__,
+      python_requires='>=2.7, <3.0',
       classifiers=[]
       )

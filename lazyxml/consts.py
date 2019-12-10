@@ -22,31 +22,18 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
 
-import htmlentitydefs
-
-from .consts import Default, Regex
+import re
 
 
-def html_entity_decode_char(matchobj, defs=htmlentitydefs.entitydefs):
-    try:
-        return defs[matchobj.group(1)]
-    except KeyError:
-        return matchobj.group(0)
+class Default(object):
+    VERSION = '1.0'
+    ENCODING = 'utf-8'
+    KEY_ATTR = '{attrs}'
+    KEY_VALUE = '{values}'
 
 
-def html_entity_decode(s):
-    return Regex.HTML_ENTITY.sub(html_entity_decode_char, s)
-
-
-def strip_whitespace(s, strict=False):
-    s = s.replace('\r', '').replace('\n', '').replace('\t', '').replace('\x0B', '')
-    return s.strip() if strict else s
-
-
-def is_iterable(obj):
-    try:
-        iter(obj)
-    except TypeError:
-        return False
-    else:
-        return True
+class Regex(object):
+    XML_NS = re.compile(r'\{(.*?)\}(.*)')  # XML Namespace
+    XML_HEADER = re.compile(r'<\?xml.*?\?>', re.I | re.S)  # XML Header Declare
+    XML_ENCODING = re.compile(r'<\?xml\s.*?encoding="(.*?)".*?\?>', re.I | re.S)  # XML Encoding
+    HTML_ENTITY = re.compile('&(\w+?);')  # HTML Entity Character
