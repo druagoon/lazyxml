@@ -6,8 +6,8 @@ from setuptools import setup
 
 import lazyxml
 
-if sys.version_info[:2] < (2, 7) or sys.version_info[0] >= 3:
-    sys.exit('Python 2.7.x is required.')
+if sys.version_info[:2] < (3, 7):
+    sys.exit('Python 3.7.x is required.')
 
 with open('README.md') as fp:
     readme = fp.read()
@@ -24,6 +24,6 @@ setup(name=lazyxml.__title__,
       url='https://github.com/heronotears/lazyxml',
       packages=[lazyxml.__title__],
       license=lazyxml.__license__,
-      python_requires='>=2.7, <3.0',
+      python_requires='>=3.7',
       classifiers=[]
       )
