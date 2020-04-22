@@ -23,7 +23,8 @@
 #  SOFTWARE.
 
 import sys
-reload(sys)
+import importlib
+importlib.reload(sys)
 sys.setdefaultencoding('utf-8')
 import io
 import unittest
@@ -105,7 +106,7 @@ class ParserTest(unittest.TestCase):
                          b)
 
     def test_encoding(self):
-        xml = u"""
+        xml = """
         <?xml version="1.0" encoding="gbk"?>
         <string xmlns="http://www.w3.org/TR/html4/">
             <Response>
@@ -116,7 +117,7 @@ class ParserTest(unittest.TestCase):
         """.encode('gbk')
         a = {
             'Response': {
-                'Reason': u'\u4fdd\u5b58\u6210\u529f',
+                'Reason': '\u4fdd\u5b58\u6210\u529f',
                 'Result': 'true'
             }
         }
@@ -171,7 +172,7 @@ class ParserTest(unittest.TestCase):
         self.assertDictEqual(lazyxml.loads(xml), a)
 
     def test_load_fileobj(self):
-        xml = u'<?xml version="1.0" encoding="utf-8"?><demo><foo><![CDATA[<foo>]]></foo><bar><![CDATA[1]]></bar><bar><![CDATA[2]]></bar></demo>'
+        xml = '<?xml version="1.0" encoding="utf-8"?><demo><foo><![CDATA[<foo>]]></foo><bar><![CDATA[1]]></bar><bar><![CDATA[2]]></bar></demo>'
         buf = io.StringIO(xml)
         a = {'bar': ['1', '2'], 'foo': '<foo>'}
         self.assertDictEqual(lazyxml.load(buf), a)

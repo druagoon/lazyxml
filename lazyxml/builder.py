@@ -92,10 +92,10 @@ class Builder(object):
         if not root:
             assert (isinstance(data, collections.Mapping) and len(data) == 1), \
                 'if root not specified, the data that dict object and length must be one required.'
-            root, data = data.items()[0]
+            root, data = list(data.items())[0]
 
         self.build_tree(data, root)
-        xml = unicode(''.join(self.__tree).strip())
+        xml = str(''.join(self.__tree).strip())
 
         if self.__encoding != Default.ENCODING:
             xml = xml.encode(self.__encoding, errors=self.__errors)
@@ -122,24 +122,24 @@ class Builder(object):
             data = ''
         indent = ('\n%s' % (self.__indent * depth)) if self.__indent else ''
         if isinstance(data, collections.Mapping):
-            if self.__hasattr and self.check_structure(data.keys()):
+            if self.__hasattr and self.check_structure(list(data.keys())):
                 attrs, values = self.pickdata(data)
                 self.build_tree(values, tagname, attrs, depth)
             else:
                 self.__tree.append(
                     '{}{}'.format(indent, self.tag_start(tagname, attrs)))
-                iter = data.iteritems()
+                iter = data.items()
                 if self.__ksort:
                     iter = sorted(iter, key=lambda x: x[0],
                                   reverse=self.__reverse)
                 for k, v in iter:
                     attrs = {}
                     if (self.__hasattr and isinstance(v, collections.Mapping)
-                            and self.check_structure(v.keys())):
+                            and self.check_structure(list(v.keys()))):
                         attrs, v = self.pickdata(v)
                     self.build_tree(v, k, attrs, depth + 1)
                 self.__tree.append('{}{}'.format(indent, self.tag_end(tagname)))
-        elif utils.is_iterable(data) and not isinstance(data, types.StringTypes):
+        elif utils.is_iterable(data) and not isinstance(data, (str,)):
             for v in data:
                 self.build_tree(v, tagname, attrs, depth)
         else:
@@ -196,7 +196,7 @@ class Builder(object):
         :type attrs: dict
         :rtype: str
         """
-        attrs = sorted(attrs.iteritems(), key=lambda x: x[0])
+        attrs = sorted(iter(attrs.items()), key=lambda x: x[0])
         return ' '.join(['{}="{}"'.format(k, v) for k, v in attrs])
 
     @classmethod

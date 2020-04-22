@@ -22,12 +22,12 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
 
-import htmlentitydefs
+import html.entities
 
 from .consts import Default, Regex
 
 
-def html_entity_decode_char(matchobj, defs=htmlentitydefs.entitydefs):
+def html_entity_decode_char(matchobj, defs=html.entities.entitydefs):
     try:
         return defs[matchobj.group(1)]
     except KeyError:

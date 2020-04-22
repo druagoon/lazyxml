@@ -25,7 +25,7 @@
 """A simple xml parse and build library.
 """
 
-from __future__ import absolute_import, with_statement
+
 
 from . import builder, parser
 
