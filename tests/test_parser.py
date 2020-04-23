@@ -23,9 +23,6 @@
 #  SOFTWARE.
 
 import sys
-import importlib
-importlib.reload(sys)
-sys.setdefaultencoding('utf-8')
 import io
 import unittest
 from collections import defaultdict
@@ -114,7 +111,7 @@ class ParserTest(unittest.TestCase):
                 <Reason>保存成功</Reason>
             </Response>
         </string>
-        """.encode('gbk')
+        """
         a = {
             'Response': {
                 'Reason': '\u4fdd\u5b58\u6210\u529f',
