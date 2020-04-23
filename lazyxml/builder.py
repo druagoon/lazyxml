@@ -22,8 +22,8 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
 
-import cgi
 import collections
+import html
 import types
 
 from . import utils
@@ -167,13 +167,13 @@ class Builder(object):
         """Convert xml special chars to entities.
 
         :param data: the data will be converted safe.
-        :param cdata: whether to use cdata. Default：``True``. If not, use :func:`cgi.escape` to convert data.
+        :param cdata: whether to use cdata. Default：``True``. If not, use :func:`html.escape` to convert data.
         :type cdata: bool
         :rtype: str
         """
         if cdata:
             return '<![CDATA[{}]]>'.format(data)
-        return cgi.escape(str(data), True)
+        return html.escape(str(data), True)
 
     @classmethod
     def build_tag(cls, tag, text='', attrs=None):
