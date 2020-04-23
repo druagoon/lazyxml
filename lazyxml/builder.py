@@ -68,7 +68,7 @@ class Builder(object):
 
         root = self.__root
         if not root:
-            assert (isinstance(data, collections.Mapping) and len(data) == 1), \
+            assert (isinstance(data, collections.abc.Mapping) and len(data) == 1), \
                 'if root not specified, the data that dict object and length must be one required.'
             root, data = list(data.items())[0]
 
@@ -99,7 +99,7 @@ class Builder(object):
         if data is None:
             data = ''
         indent = ('\n%s' % (self.__indent * depth)) if self.__indent else ''
-        if isinstance(data, collections.Mapping):
+        if isinstance(data, collections.abc.Mapping):
             if self.__hasattr and self.check_structure(list(data.keys())):
                 attrs, values = self.pickdata(data)
                 self.build_tree(values, tagname, attrs, depth)
@@ -112,7 +112,7 @@ class Builder(object):
                                   reverse=self.__reverse)
                 for k, v in iter:
                     attrs = {}
-                    if (self.__hasattr and isinstance(v, collections.Mapping)
+                    if (self.__hasattr and isinstance(v, collections.abc.Mapping)
                             and self.check_structure(list(v.keys()))):
                         attrs, v = self.pickdata(v)
                     self.build_tree(v, k, attrs, depth + 1)
