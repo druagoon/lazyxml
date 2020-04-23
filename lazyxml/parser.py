@@ -72,7 +72,7 @@ class Parser(object):
         if not self.__encoding:
             self.__encoding = self.guess_xml_encoding(content) or Default.ENCODING
         if self.__encoding.lower() != Default.ENCODING:
-            content = self.strip_xml_header(content.decode(self.__encoding, errors=self.__errors))
+            content = self.strip_xml_header(content)
         if self.__unescape:
             content = utils.html_entity_decode(content)
         return content
