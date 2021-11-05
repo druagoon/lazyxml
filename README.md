@@ -2,9 +2,9 @@ Brief
 =====
 
 [![alt Latest Version](https://img.shields.io/pypi/v/lazyxml.svg)](https://pypi.org/project/lazyxml/)
-[![alt License](https://img.shields.io/github/license/heronotears/lazyxml.svg)](https://github.com/heronotears/lazyxml/blob/master/LICENSE)
+[![alt License](https://img.shields.io/github/license/druagoon/lazyxml.svg)](https://github.com/druagoon/lazyxml/blob/master/LICENSE)
 [![alt Downloads](https://img.shields.io/pypi/dm/lazyxml.svg)](https://pypi.org/project/lazyxml/)
-[![Build Status](https://travis-ci.org/heronotears/lazyxml.svg?branch=master)](https://travis-ci.org/heronotears/lazyxml)
+[![Build Status](https://travis-ci.org/druagoon/lazyxml.svg?branch=master)](https://travis-ci.org/druagoon/lazyxml)
 
 A simple xml parse and build library.
 
@@ -61,4 +61,4 @@ See [docs in readthedocs](http://lazyxml.readthedocs.org/en/latest/)
 Changelog
 =========
 
-See [changelog](https://github.com/heronotears/lazyxml/blob/master/docs/changelog.rst)
+See [changelog](https://github.com/druagoon/lazyxml/blob/master/docs/changelog.rst)
