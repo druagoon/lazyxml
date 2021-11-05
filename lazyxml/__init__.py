@@ -11,7 +11,7 @@ __title__ = 'lazyxml'
 __description__ = 'A simple xml parse and build library.'
 __author__ = 'Zonglong Fan'
 __author_email__ = '<lazyboy.fan@gmail.com>'
-__version__ = '1.3.0'
+__version__ = '1.3.2'
 __license__ = 'MIT'
 __copyright__ = 'Copyright (c) 2014 Zonglong Fan'
 
