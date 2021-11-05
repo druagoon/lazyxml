@@ -1,27 +1,5 @@
 # -*- coding: utf-8 -*-
 
-#  MIT License
-#
-#  Copyright (c) 2012-2019 Ryan Fau
-#
-#  Permission is hereby granted, free of charge, to any person obtaining a copy
-#  of this software and associated documentation files (the "Software"), to deal
-#  in the Software without restriction, including without limitation the rights
-#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#  copies of the Software, and to permit persons to whom the Software is
-#  furnished to do so, subject to the following conditions:
-#
-#  The above copyright notice and this permission notice shall be included in all
-#  copies or substantial portions of the Software.
-#
-#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#  SOFTWARE.
-
 """A simple xml parse and build library.
 """
 
@@ -31,11 +9,11 @@ from . import builder, parser
 
 __title__ = 'lazyxml'
 __description__ = 'A simple xml parse and build library.'
-__author__ = 'Ryan Fau'
+__author__ = 'Zonglong Fan'
 __author_email__ = '<lazyboy.fan@gmail.com>'
 __version__ = '1.3.0'
 __license__ = 'MIT'
-__copyright__ = 'Copyright (c) 2012-2019 Ryan Fau'
+__copyright__ = 'Copyright (c) 2014 Zonglong Fan'
 
 
 def loads(content, encoding=None, unescape=False, strip_root=True,
@@ -78,7 +56,7 @@ def loads(content, encoding=None, unescape=False, strip_root=True,
 
 
 def load(fp, encoding=None, unescape=False, strip_root=True,
-          strip_attr=True, strip=True, errors='strict'):
+         strip_attr=True, strip=True, errors='strict'):
     """Load xml content from file and convert to python object.
 
     >>> import lazyxml
@@ -167,8 +145,8 @@ def dumps(obj, encoding=None, header_declare=True, version=None, root=None,
 
 
 def dump(obj, fp, encoding=None, header_declare=True, version=None, root=None,
-          cdata=True, indent=None, ksort=False, reverse=False, errors='strict',
-          hasattr=False, attrkey=None, valuekey=None):
+         cdata=True, indent=None, ksort=False, reverse=False, errors='strict',
+         hasattr=False, attrkey=None, valuekey=None):
     """Dump python object to file.
 
     >>> import lazyxml
