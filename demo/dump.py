@@ -2,7 +2,8 @@
 
 import os
 import sys
-reload(sys)
+import importlib
+importlib.reload(sys)
 sys.setdefaultencoding('utf-8')
 
 sys.path.insert(0, os.path.abspath('../'))
@@ -48,7 +49,7 @@ ATTRDATA = {
             },
             'test2': {
                 ATTRKEY: {'b': 2, 'a': 1, 'c': 3},
-                VALUEKEY: u'测试用'
+                VALUEKEY: '测试用'
             }
         }
     }
@@ -66,27 +67,27 @@ def main():
         lazyxml.dump(data, fp)
 
     # xml写入文件 提供类文件对象
-    from cStringIO import StringIO
+    from io import StringIO
     buffer = StringIO()
     lazyxml.dump(data, buffer)
-    print buffer.getvalue()
+    print(buffer.getvalue())
     # <?xml version="1.0" encoding="utf-8"?><demo><foo><![CDATA[1]]></foo><bar><![CDATA[2]]></bar></demo>
     buffer.close()
 
     # 默认
-    print lazyxml.dumps(data)
+    print(lazyxml.dumps(data))
     # '<?xml version="1.0" encoding="utf-8"?><demo><foo><![CDATA[<foo>]]></foo><bar><![CDATA[1]]></bar><bar><![CDATA[2]]></bar></demo>'
 
     # 不声明xml头部
-    print lazyxml.dumps(data, header_declare=False)
+    print(lazyxml.dumps(data, header_declare=False))
     # '<demo><foo><![CDATA[<foo>]]></foo><bar><![CDATA[1]]></bar><bar><![CDATA[2]]></bar></demo>'
 
     # 不使用CDATA格式
-    print lazyxml.dumps(data, cdata=False)
+    print(lazyxml.dumps(data, cdata=False))
     # '<?xml version="1.0" encoding="utf-8"?><demo><foo>&lt;foo&gt;</foo><bar>1</bar><bar>2</bar></demo>'
 
     # 缩进和美观xml
-    print lazyxml.dumps(data, indent=' ' * 4)
+    print(lazyxml.dumps(data, indent=' ' * 4))
     # <?xml version="1.0" encoding="utf-8"?>
     # <demo>
     #     <foo><![CDATA[<foo>]]></foo>
@@ -95,11 +96,11 @@ def main():
     # </demo>
 
     # 使用标签名称排序
-    print lazyxml.dumps(data, ksort=True)
+    print(lazyxml.dumps(data, ksort=True))
     # '<?xml version="1.0" encoding="utf-8"?><demo><bar><![CDATA[1]]></bar><bar><![CDATA[2]]></bar><foo><![CDATA[<foo>]]></foo></demo>'
 
     # 使用标签名称倒序排序
-    print lazyxml.dumps(data, ksort=True, reverse=True)
+    print(lazyxml.dumps(data, ksort=True, reverse=True))
     # '<?xml version="1.0" encoding="utf-8"?><demo><foo><![CDATA[<foo>]]></foo><bar><![CDATA[1]]></bar><bar><![CDATA[2]]></bar></demo>'
 
     # 含有属性的xml数据
@@ -110,7 +111,7 @@ def main():
         'attrkey': ATTRKEY,
         'valuekey': VALUEKEY
     }
-    print lazyxml.dumps(ATTRDATA, **kw)
+    print(lazyxml.dumps(ATTRDATA, **kw))
     """
     <root a1="1" a2="2">
         <test1 a="1" b="2" c="3">

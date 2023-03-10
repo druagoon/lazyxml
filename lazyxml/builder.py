@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import cgi
 import collections
+import html
 import types
 
 from . import utils
@@ -68,12 +68,12 @@ class Builder(object):
 
         root = self.__root
         if not root:
-            assert (isinstance(data, collections.Mapping) and len(data) == 1), \
+            assert (isinstance(data, collections.abc.Mapping) and len(data) == 1), \
                 'if root not specified, the data that dict object and length must be one required.'
-            root, data = data.items()[0]
+            root, data = list(data.items())[0]
 
         self.build_tree(data, root)
-        xml = unicode(''.join(self.__tree).strip())
+        xml = str(''.join(self.__tree).strip())
 
         if self.__encoding != Default.ENCODING:
             xml = xml.encode(self.__encoding, errors=self.__errors)
@@ -99,25 +99,25 @@ class Builder(object):
         if data is None:
             data = ''
         indent = ('\n%s' % (self.__indent * depth)) if self.__indent else ''
-        if isinstance(data, collections.Mapping):
-            if self.__hasattr and self.check_structure(data.keys()):
+        if isinstance(data, collections.abc.Mapping):
+            if self.__hasattr and self.check_structure(list(data.keys())):
                 attrs, values = self.pickdata(data)
                 self.build_tree(values, tagname, attrs, depth)
             else:
                 self.__tree.append(
                     '{}{}'.format(indent, self.tag_start(tagname, attrs)))
-                iter = data.iteritems()
+                iter = data.items()
                 if self.__ksort:
                     iter = sorted(iter, key=lambda x: x[0],
                                   reverse=self.__reverse)
                 for k, v in iter:
                     attrs = {}
-                    if (self.__hasattr and isinstance(v, collections.Mapping)
-                            and self.check_structure(v.keys())):
+                    if (self.__hasattr and isinstance(v, collections.abc.Mapping)
+                            and self.check_structure(list(v.keys()))):
                         attrs, v = self.pickdata(v)
                     self.build_tree(v, k, attrs, depth + 1)
                 self.__tree.append('{}{}'.format(indent, self.tag_end(tagname)))
-        elif utils.is_iterable(data) and not isinstance(data, types.StringTypes):
+        elif utils.is_iterable(data) and not isinstance(data, (str,)):
             for v in data:
                 self.build_tree(v, tagname, attrs, depth)
         else:
@@ -145,13 +145,13 @@ class Builder(object):
         """Convert xml special chars to entities.
 
         :param data: the data will be converted safe.
-        :param cdata: whether to use cdata. Default：``True``. If not, use :func:`cgi.escape` to convert data.
+        :param cdata: whether to use cdata. Default：``True``. If not, use :func:`html.escape` to convert data.
         :type cdata: bool
         :rtype: str
         """
         if cdata:
             return '<![CDATA[{}]]>'.format(data)
-        return cgi.escape(str(data), True)
+        return html.escape(str(data), True)
 
     @classmethod
     def build_tag(cls, tag, text='', attrs=None):
@@ -174,7 +174,7 @@ class Builder(object):
         :type attrs: dict
         :rtype: str
         """
-        attrs = sorted(attrs.iteritems(), key=lambda x: x[0])
+        attrs = sorted(iter(attrs.items()), key=lambda x: x[0])
         return ' '.join(['{}="{}"'.format(k, v) for k, v in attrs])
 
     @classmethod

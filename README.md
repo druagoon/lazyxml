@@ -42,7 +42,7 @@ Examples
 '<?xml version="1.0" encoding="utf-8"?><demo><foo><![CDATA[<foo>]]></foo><bar><![CDATA[1]]></bar><bar><![CDATA[2]]></bar></demo>'
 >>> lazyxml.dumps(data, cdata=False)
 '<?xml version="1.0" encoding="utf-8"?><demo><foo>&lt;foo&gt;</foo><bar>1</bar><bar>2</bar></demo>'
->>> print lazyxml.dumps(data, indent=' ' * 4)
+>>> print(lazyxml.dumps(data, indent=' ' * 4))
 <?xml version="1.0" encoding="utf-8"?>
 <demo>
    <foo><![CDATA[<foo>]]></foo>
